@@ -1,0 +1,26 @@
+services:
+  app:
+    build: .
+    ports:
+      - '3000:3000' # Publicly accessible
+    env_file: .env
+    depends_on:
+      - redis
+      - mongo
+  worker:
+    build: .
+    command: npm run worker
+    env_file: .env
+    depends_on:
+      - redis
+      - mongo
+  redis:
+    image: redis
+    # No ports exposed externally
+  mongo:
+    image: mongo
+    # No ports exposed externally
+    volumes:
+      - mongo-data:/data/db # Persistent storage
+volumes:
+  mongo-data:
