@@ -4,23 +4,21 @@ const router = express.Router();
 const { Queue } = require('bullmq');
 const Tweet = require('../models/Tweet');
 
-// Redis Configuration
 const redisConfig = {
 	host: process.env.REDIS_HOST || 'localhost',
 	port: process.env.REDIS_PORT || 6379,
 };
-
+console.log('Tweet Routes Redis Config:', redisConfig);
 const tweetQueue = new Queue('tweetQueue', { connection: redisConfig });
 
-// Middleware to extract userId (simplified; assumes user is authenticated)
+
 const getUserId = (req, res, next) => {
-	// In production, use a proper auth middleware (e.g., JWT or session)
-	req.userId = req.headers['x-user-id']; // Temporary header-based user ID
+	req.userId = req.headers['x-user-id'];
 	if (!req.userId) return res.status(401).json({ error: 'Unauthorized' });
 	next();
 };
 
-// Schedule a Tweet
+
 router.post('/schedule-tweet', getUserId, async (req, res) => {
 	const { tweetText, scheduledTime } = req.body;
 	if (!tweetText || !scheduledTime) {
@@ -41,8 +39,8 @@ router.post('/schedule-tweet', getUserId, async (req, res) => {
 			'tweet',
 			{ tweetId: tweet._id },
 			{
-				delay: Math.max(0, new Date(scheduledTime) - Date.now()), // Ensure non-negative delay
-				jobId: tweet._id.toString(), // Consistent job ID for cancellation
+				delay: Math.max(0, new Date(scheduledTime) - Date.now()),
+				jobId: tweet._id.toString(),
 			}
 		);
 		res.status(201).json(tweet);
@@ -53,7 +51,6 @@ router.post('/schedule-tweet', getUserId, async (req, res) => {
 	}
 });
 
-// View Scheduled Tweets
 router.get('/scheduled-tweets', getUserId, async (req, res) => {
 	try {
 		const tweets = await Tweet.find({ userId: req.userId, status: 'pending' });
@@ -65,7 +62,7 @@ router.get('/scheduled-tweets', getUserId, async (req, res) => {
 	}
 });
 
-// Delete a Scheduled Tweet
+
 router.delete('/scheduled-tweet/:id', getUserId, async (req, res) => {
 	try {
 		const tweet = await Tweet.findOne({

@@ -6,7 +6,6 @@ const winston = require('winston');
 const Tweet = require('./models/Tweet');
 const User = require('./models/User');
 
-// Logger Setup
 const logger = winston.createLogger({
 	level: 'info',
 	format: winston.format.simple(),
@@ -18,14 +17,16 @@ const redisConfig = {
 	host: process.env.REDIS_HOST || 'localhost',
 	port: process.env.REDIS_PORT || 6379,
 };
+console.log('Worker Redis Config:', redisConfig); // Debug log
 
-// MongoDB Connection
 mongoose
-	.connect(process.env.MONGO_URI)
+	.connect(process.env.MONGO_URI, {
+		useNewUrlParser: true,
+		useUnifiedTopology: true,
+	})
 	.then(() => logger.info('Worker connected to MongoDB'))
 	.catch((err) => logger.error('MongoDB connection error:', err));
 
-// Worker Definition
 const worker = new Worker(
 	'tweetQueue',
 	async (job) => {
@@ -56,6 +57,5 @@ const worker = new Worker(
 	{ connection: redisConfig }
 );
 
-// Event Listeners
 worker.on('failed', (job, err) => logger.error(`Job ${job.id} failed:`, err));
 worker.on('completed', (job) => logger.info(`Job ${job.id} completed`));

@@ -12,7 +12,7 @@ function App() {
 	const fetchTweets = async () => {
 		try {
 			const res = await axios.get(
-				'http://localhost:3000/api/scheduled-tweets',
+				'https://auto-tweet-kf31.onrender.com/api/scheduled-tweets',
 				{
 					headers: { 'X-User-Id': userId },
 				}
@@ -38,7 +38,7 @@ function App() {
 			).toISOString();
 
 			await axios.post(
-				'http://localhost:3000/api/schedule-tweet',
+				'https://auto-tweet-kf31.onrender.com/api/schedule-tweet',
 				{ tweetText, scheduledTime: utcDate },
 				{ headers: { 'X-User-Id': userId } }
 			);
@@ -54,9 +54,12 @@ function App() {
 	// Handle tweet deletion
 	const handleDelete = async (id) => {
 		try {
-			await axios.delete(`http://localhost:3000/api/scheduled-tweet/${id}`, {
-				headers: { 'X-User-Id': userId },
-			});
+			await axios.delete(
+				`https://auto-tweet-kf31.onrender.com/api/scheduled-tweet/${id}`,
+				{
+					headers: { 'X-User-Id': userId },
+				}
+			);
 			fetchTweets();
 			setError(null);
 		} catch (err) {
@@ -131,7 +134,7 @@ function App() {
 			</ul>
 
 			<a
-				href='http://localhost:3000/auth/twitter'
+				href='https://auto-tweet-kf31.onrender.com/auth/twitter'
 				className='mt-6 text-blue-500 hover:underline'>
 				Connect Twitter
 			</a>
