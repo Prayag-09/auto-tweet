@@ -14,7 +14,7 @@ const logger = winston.createLogger({
 
 // Redis Configuration
 const redisConfig = {
-	host: process.env.REDIS_HOST || 'localhost',
+	host: process.env.REDIS_HOST || 'tweet-scheduler-redis',
 	port: process.env.REDIS_PORT || 6379,
 };
 console.log('Worker Redis Config:', redisConfig); // Debug log

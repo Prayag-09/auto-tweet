@@ -5,7 +5,7 @@ const { Queue } = require('bullmq');
 const Tweet = require('../models/Tweet');
 
 const redisConfig = {
-	host: process.env.REDIS_HOST || 'localhost',
+	host: process.env.REDIS_HOST || 'tweet-scheduler-redis',
 	port: process.env.REDIS_PORT || 6379,
 };
 console.log('Tweet Routes Redis Config:', redisConfig);
